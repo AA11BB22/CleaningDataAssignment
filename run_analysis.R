@@ -1,9 +1,15 @@
 file <- "UCI HAR Dataset"
 
 if (!file.exists(file)){
-    url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-    download.file(url, file)
-    unzip(file)
+    
+    #Check if the zip exists
+    if (!file.exists(paste(file, "zip", sep = "."))){
+        url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+        download.file(url, paste(file, "zip", sep = "."))
+    }
+    
+    #unzip the zip file
+    unzip(paste(file, "zip", sep = "."))
 }
 
 # categories of activity (factors)
@@ -44,3 +50,4 @@ filtered_data$subject <- as.factor(filtered_data$subject)
 # group by activity and subject, then perform average on all columns except "activity" and "subject"
 tidy <- aggregate(filtered_data[-which(names(filtered_data) %in% c("activity", "subject"))], by=list(activity=filtered_data$activity, subject=filtered_data$subject), FUN=mean)
 
+write.table(tidy, "tidy.txt", row.name=FALSE)
